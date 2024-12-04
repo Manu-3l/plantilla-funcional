@@ -5,12 +5,15 @@ package taller
 
 import scala.util.Random
 import common.parallel
+
+import scala.collection.parallel.CollectionConverters.ImmutableSeqIsParallelizable
 import scala.collection.parallel.immutable._
 
 object App {
   def main(args: Array[String]): Unit = {
     println(greeting())
     Benchmarks.benchmarkingVectores()
+    Benchmarks.benchmarkingMultMatriz()
     Benchmarks.benchmarkingMultMatrizRec()
     Benchmarks.benchmarkingMultMatrizStrassen()
   }
@@ -54,6 +57,14 @@ object App {
         Vector.tabulate(m1.length, m2.length) { (i, j) =>
             prodPunto(m1(i), transpuestaM2(j))
         }
+    }
+
+    // Funciónn multMatrizPar que paraleliza la función multMatriz
+    def multMatrizPar(m1: Matriz, m2: Matriz): Matriz = {
+      val transpuestaM2 = transpuesta(m2)
+      Vector.tabulate(m1.length, m2.length) { (i, j) =>
+        prodPunto(m1(i).par.toVector, transpuestaM2(j).par.toVector)
+      }
     }
 
     // Funciones para extraer una submatriz y sumar posteriormente las matrices
